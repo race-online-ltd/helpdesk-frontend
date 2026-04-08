@@ -1,0 +1,187 @@
+@media (max-width: 576px) {
+    .sidebar {
+        position: absolute;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        width: 100%;
+        height: auto;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        z-index: 99999;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        margin-bottom: 0;
+    }
+
+    .content-box {
+        margin-left: 0;
+        width: 100%;
+        margin-bottom: 60px;
+        /* Adjust based on the sidebar height */
+    }
+
+    .header {
+        left: 0;
+        width: 100%;
+        height: 8%;
+    }
+
+    .content {
+        margin-top: 60px;
+        /* height: calc(100% - 130px); */
+        /* height: calc(100% - 70px); */
+        padding: 10px 0;
+        margin-bottom: 140px;
+    }
+
+    .client-complaint-create-floating-button {
+        bottom: 65px;
+    }
+
+    .navbar-nav {
+        flex-direction: row;
+        justify-content: end;
+        position: absolute;
+        top: 5px;
+        right: 0;
+    }
+
+    .navbar-toggler {
+        display: none;
+    }
+
+    nav .header-nav-show {
+        display: block !important;
+    }
+
+    .notification-box {
+        /* right: -13px; */
+        right: 1px;
+        width: 320px;
+        height: 450px;
+    }
+
+    .ticket-details-card {
+        position: relative;
+        top: 0;
+        /* max-width: fit-content; */
+        width: 100%;
+    }
+
+    .info-btn {
+        display: block;
+    }
+
+    .info-box-container {
+        display: none;
+    }
+
+    .ticket-details-card-body {
+        padding: 10px;
+    }
+
+    .offcanvas.offcanvas-end {
+        width: 100%;
+        bottom: 60px;
+    }
+
+    .avater {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 10px;
+    }
+
+    .comment-action {
+        position: relative;
+        right: 30px;
+    }
+
+    .todays-trand {
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    .header-filter {
+        /* height: 120px; */
+        height: auto;
+    }
+
+    .report-filter-btn {
+        display: block;
+    }
+
+    .report-filter-container {
+        display: none;
+    }
+
+    .action-filter-btn {
+        display: block;
+    }
+
+    .action-filter-container {
+        display: none !important;
+    }
+
+    .search-input {
+        width: 100% !important;
+    }
+
+    .report-summary-container {
+        margin-left: 0;
+        justify-content: center;
+    }
+
+    .report-summary-container .report-summary-item {
+        flex-grow: 1;
+        flex-basis: 26%;
+    }
+
+    .ticket-filter-btn {
+        display: block;
+    }
+
+    .ticket-filter-container {
+        display: none !important;
+    }
+
+    .responsive-nav-tabs {
+        width: 100%;
+    }
+
+    .responsive-nav-tabs li:last-child {
+        margin-left: auto;
+    }
+
+    .rs-picker-toggle-wrapper {
+        width: 100% !important;
+    }
+
+    .label-w {
+        width: 33% !important;
+    }
+
+    .label-cat-w {
+        width: 40% !important;
+    }
+
+    .coment-icon-overlay {
+        left: 35%
+    }
+
+    .customer-subcategory-list ul li {
+        flex-basis: 100%;
+
+    }
+
+    .description-label {
+        width: 26%;
+    }
+
+    /* .ticke-info {
+        display: block;
+    } */
+}

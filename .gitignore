@@ -1,0 +1,52 @@
+# 🔥 Dependencies
+/node_modules
+
+# 🔥 Build output
+/build
+/dist
+
+# 🔥 Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# 🔥 Environment variables (VERY IMPORTANT)
+.env
+.env.*
+!.env.example
+
+# 🔥 Cache
+.cache/
+.parcel-cache/
+.vite/
+
+# 🔥 OS files
+.DS_Store
+Thumbs.db
+
+# 🔥 Editor files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 🔥 Testing
+/coverage
+
+# 🔥 TypeScript
+*.tsbuildinfo
+
+# 🔥 Misc
+*.tmp
+*.temp
+
+# ❌ Remove unnecessary for pure React (optional)
+# /.next/
+# /out/
+# Dockerfile*
+# docker-compose*
