@@ -37,7 +37,7 @@ import { generateStrongPassword } from '../../../utils/utility';
 import { fetchDefaultClientRole } from '../../../api/api-client/settings/roleApi';
 import { useUserRolePermissions } from '../../custom-hook/useUserRolePermissions';
 import { fetchAggregatorsByClient } from '../../../api/api-client/settings/clientAggregatorMapping';
-import TextEditor from '../components/text-editor/TextEditor';
+import CustomerTextEditor from '../components/text-editor/CustomerTextEditor';
 
 import { useDropzone } from 'react-dropzone';
 
@@ -743,12 +743,14 @@ export const CustomerComplaintCreate = () => {
           <div className="row">
             <div className="col-12">
               <div className="input-group mb-3">
-                <span className="input-group-text">{faPhoneIcon} Mobile No.</span>
+                <span className="input-group-text">{faPhoneIcon}</span>
                 <input
                   className="form-control"
                   id="mobileNumber"
                   type="text"
-                  placeholder="আপনার মোবাইল নম্বর টাইপ করুন"
+                  placeholder={isChecked
+                  ? 'Enter your mobile number'
+                  : 'আপনার মোবাইল নম্বর টাইপ করুন'}
                   value={formik.values.mobileNumber}
                   onChange={formik.handleChange}
                 />
@@ -793,7 +795,7 @@ export const CustomerComplaintCreate = () => {
                     open();
                   }}
                 >
-                  Choose Files
+                   <i className="bi bi-upload"></i>
                 </span>
 
                 <input
@@ -803,11 +805,18 @@ export const CustomerComplaintCreate = () => {
                   onPaste={handlePaste}
                   autoComplete="off"
                   className="form-control bg-white shadow-none"
+                  // placeholder={
+                  //   formik.values.attachment?.length > 0
+                  //     ? `${formik.values.attachment.length} files selected`
+                  //     : 'Attach files by dragging, dropping, or pasting screenshots'
+                  // }
                   placeholder={
-                    formik.values.attachment?.length > 0
-                      ? `${formik.values.attachment.length} files selected`
-                      : 'Attach files by dragging, dropping, or pasting screenshots'
-                  }
+                  formik.values.attachment?.length > 0
+                    ? `${formik.values.attachment.length} files selected`
+                    : isChecked
+                      ? 'Drag, paste, or upload files'
+                       : 'ফাইল drag, paste বা upload করুন'
+                }
                   style={{
                     cursor: 'text',
                     caretColor: 'black',
@@ -861,13 +870,14 @@ export const CustomerComplaintCreate = () => {
             </div> */}
             <div className="col-12">
               <div className="input-group my-3">
-                <span className="input-group-text">Description</span>
 
-                <div className="flex-grow-1">
-                  <TextEditor
+                <div className="flex-grow-1" style={{ minHeight: '200px' }}>
+                  <CustomerTextEditor
                     name="descriptions"
                     value={formik.values.descriptions}
-                    placeholder="Write description..."
+                    placeholder={isChecked
+                    ? 'Write description...'
+                    : 'বিস্তারিত লিখুন...'}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                   />
