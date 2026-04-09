@@ -155,6 +155,17 @@ export const forwardToHQ = async (data) => {
   }
 };
 
+export const createVoiceTicket = async (data) => {
+  try {
+    const response = await apiClient.post('ticket/create-voice-ticket', data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
 export const selfTicketToTicket = async (data) => {
   try {
     const response = await apiClient.post('ticket/self-ticket-to-ticket', data);

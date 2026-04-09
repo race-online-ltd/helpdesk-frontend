@@ -1,0 +1,308 @@
+.voice-recorder-floating-button {
+  position: fixed;
+  top: 50%;
+  right: 24px;
+  width: 64px;
+  height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  transform: translateY(-50%);
+  z-index: 1055;
+  touch-action: none;
+  cursor: grab;
+}
+
+.voice-recorder-floating-button__tooltip {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  min-width: 220px;
+  max-width: 290px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: #ffffff;
+  background: rgba(20, 35, 70, 0.95);
+  box-shadow: 0 10px 30px rgba(7, 23, 57, 0.25);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.voice-recorder-floating-button__tooltip::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  transform: translateY(-50%);
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent transparent transparent rgba(20, 35, 70, 0.95);
+}
+
+.voice-recorder-floating-button__ring {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  animation: voiceRecorderPulse 2s ease-in-out infinite;
+}
+
+.voice-recorder-floating-button__ring-image {
+  width: 80%;
+  height: 80%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.voice-recorder-floating-button__mic {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #1a64e9;
+  box-shadow: 0 18px 40px rgba(18, 84, 208, 0.22);
+}
+
+.voice-recorder-floating-button:hover,
+.voice-recorder-floating-button:focus-visible {
+  outline: none;
+}
+
+.voice-recorder-floating-button:active {
+  cursor: grabbing;
+}
+
+.voice-recorder-floating-button:hover .voice-recorder-floating-button__tooltip,
+.voice-recorder-floating-button:focus-visible .voice-recorder-floating-button__tooltip {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+.voice-recorder-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(10, 18, 36, 0.62);
+}
+
+.voice-recorder-modal-card {
+  width: min(100%, 520px);
+  padding: 22px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff 0%, #f4f8ff 100%);
+  box-shadow: 0 30px 80px rgba(13, 33, 84, 0.28);
+}
+
+.voice-recorder-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.voice-recorder-icon-button {
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(26, 100, 233, 0.1);
+  color: #163d92;
+}
+
+.voice-recorder-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: #294264;
+  font-size: 14px;
+}
+
+.voice-recorder-wave-shell {
+  min-height: 168px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(33, 94, 224, 0.14);
+  background: linear-gradient(135deg, rgba(26, 100, 233, 0.08), rgba(18, 230, 210, 0.09));
+}
+
+.voice-recorder-wave-shell.is-recording {
+  box-shadow: inset 0 0 0 1px rgba(33, 94, 224, 0.14), 0 12px 24px rgba(20, 88, 211, 0.1);
+}
+
+.voice-recorder-wave-bars {
+  width: 100%;
+  height: 106px;
+  display: grid;
+  grid-template-columns: repeat(32, minmax(0, 1fr));
+  gap: 5px;
+  align-items: end;
+}
+
+.voice-recorder-wave-bar {
+  width: 100%;
+  display: block;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #1de7d5 0%, #1a64e9 100%);
+  transition: height 120ms linear;
+}
+
+.voice-recorder-idle-action {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0 8px;
+}
+
+.voice-recorder-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.voice-recorder-controls.centered {
+  justify-content: center;
+}
+
+.voice-recorder-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.voice-recorder-action-button.record {
+  background: #eaf2ff;
+  color: #1a64e9;
+}
+
+.voice-recorder-action-button.center {
+  min-width: 132px;
+  justify-content: center;
+}
+
+.voice-recorder-action-button.stop {
+  background: #ffebef;
+  color: #c3294a;
+}
+
+.voice-recorder-action-button.retry {
+  background: #eefaf8;
+  color: #0a8e82;
+}
+
+.voice-recorder-preview {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(26, 100, 233, 0.12);
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.voice-recorder-preview-label {
+  margin-bottom: 8px;
+  color: #294264;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.voice-recorder-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+@keyframes voiceRecorderPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@media (max-width: 576px) {
+  .voice-recorder-floating-button {
+    right: 14px;
+    width: 50px;
+    height: 58px;
+  }
+
+  .voice-recorder-floating-button__ring {
+    width: 100%;
+    height: 100%;
+  }
+
+  .voice-recorder-floating-button__tooltip {
+    display: block;
+    min-width: 160px;
+    max-width: 220px;
+    padding: 6px 9px;
+    font-size: 11px;
+    line-height: 1.25;
+    right: calc(100% + 8px);
+  }
+
+  .voice-recorder-floating-button__mic {
+    width: 22px;
+    height: 22px;
+  }
+
+  .voice-recorder-modal-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .voice-recorder-wave-shell {
+    min-height: 144px;
+    padding: 18px 12px;
+  }
+
+  .voice-recorder-idle-action {
+    margin: 14px 0 6px;
+  }
+
+  .voice-recorder-footer {
+    flex-direction: column;
+  }
+
+  .voice-recorder-footer .btn,
+  .voice-recorder-footer .custom-btn-for-canvas {
+    width: 100%;
+  }
+}

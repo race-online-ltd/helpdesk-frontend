@@ -58,7 +58,7 @@ export const OpenDataTable = ({
   isLoadingTableData,
 }) => {
   const { user } = useContext(userContext);
-  console.log('User:', user);
+
   const navigate = useNavigate();
   const { setIsLoadingContextUpdated } = useContext(IsLoadingContext);
   const { hasPermission } = useUserRolePermissions();

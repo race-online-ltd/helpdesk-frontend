@@ -25,6 +25,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   fetchWebAppEntityDetails,
   forwardToHQ,
+  createVoiceTicket,
   sendSMSByPartnerNumber,
   storeSelfTicket,
 } from '../../../api/api-client/ticketApi';
@@ -38,11 +39,15 @@ import { fetchDefaultClientRole } from '../../../api/api-client/settings/roleApi
 import { useUserRolePermissions } from '../../custom-hook/useUserRolePermissions';
 import { fetchAggregatorsByClient } from '../../../api/api-client/settings/clientAggregatorMapping';
 import CustomerTextEditor from '../components/text-editor/CustomerTextEditor';
+import { FloatingVoiceRecorderButton } from '../components/recorder/FloatingVoiceRecorderButton';
+import { VoiceComplaintRecorderModal } from '../components/recorder/VoiceComplaintRecorderModal';
+import { IsLoadingContext } from '../../context/LoaderContext';
 
 import { useDropzone } from 'react-dropzone';
 
 export const CustomerComplaintCreate = () => {
   const { user } = useContext(userContext);
+  const { setIsLoadingContextUpdated } = useContext(IsLoadingContext);
   const { hasPermission } = useUserRolePermissions();
   const navigate = useNavigate();
   const clearAttachtmentRef = useRef();
@@ -65,6 +70,7 @@ export const CustomerComplaintCreate = () => {
   const [aggregatorOptions, setAggregatorOptions] = useState([]);
   const [isLoadingAggregators, setIsLoadingAggregators] = useState(false);
   const [vendorClientId, setVendorClientId] = useState(null);
+  const [isVoiceRecorderOpen, setIsVoiceRecorderOpen] = useState(false);
 
   const isUserCustomer = user?.type === 'Customer';
 
@@ -322,6 +328,8 @@ export const CustomerComplaintCreate = () => {
       .catch(errorMessage);
   };
 
+
+
   const formik = useFormik({
     initialValues: {
       clientInfo: {
@@ -391,6 +399,7 @@ export const CustomerComplaintCreate = () => {
 
       const subcateName = subCategoryOptions?.filter((item) => item.id == values.subCategory);
       formData.append('subCategoryName', subcateName[0]?.sub_category_in_english);
+     
 
       const attachments =
         values.attachment instanceof FileList
@@ -401,6 +410,7 @@ export const CustomerComplaintCreate = () => {
         formData.append(`attachment[${index}]`, file);
       });
       formData.append('descriptions', values.descriptions);
+
 
       const apiCall = submitType === 'self_ticket_create' ? storeSelfTicket : forwardToHQ;
       apiCall(formData)
@@ -505,7 +515,134 @@ export const CustomerComplaintCreate = () => {
     });
     syncFilesToFormik(dt);
   };
-  console.log('formik values', formik.values);
+  
+  // voice integration handlers
+ const sendVoiceToApi = async (file) => {
+  const formData = new FormData();
+
+  // ✅ Required by backend
+  formData.append("file", file);
+
+
+  try {
+    const companyId = formik.values.businessEntity;
+
+    const response = await fetch(
+      `${import.meta.env.VITE_VOICE_API_URL}?company_id=${companyId}`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_VOICE_API_KEY}`,
+        },
+        body: formData, 
+      }
+    );
+
+    const data = await response.json();
+
+    return data;
+  } catch (error) {
+    errorMessage("Failed to process voice input. Please try again.");
+    console.error("Voice API Error:", error);
+    return null;
+  }
+};
+
+  const handleVoiceApiSubmit = async ({ number, file,voiceData }) => {
+  try {
+    
+    const values = formik.values;
+    const formData = new FormData();
+
+    // clientInfo
+    Object.keys(values.clientInfo).forEach((key) => {
+      formData.append(`clientInfo[${key}]`, values.clientInfo[key]);
+    });
+
+    // normal fields
+    formData.append('user_id', values.user_id);
+    formData.append('businessEntity', values.businessEntity);
+    formData.append('client', values.client);
+    formData.append('sid', '');
+    formData.append('ccEmail', []);
+    formData.append('source', '');
+    // ✅ category & subcategory from AI
+    formData.append('category', voiceData?.category_id);
+    formData.append('subCategory', voiceData?.subcategory_id);
+    formData.append('subCategoryName', voiceData?.subcategory);
+
+    formData.append('teamId', values.teamId);
+    formData.append('priority', values.priority);
+    formData.append('status', values.status);
+    formData.append('refTicket', '');
+
+    // ✅ OVERRIDE mobile number from voice
+    formData.append('mobileNumber', number);
+
+    // aggregator
+    if (defaultBusinessEntityId === 8 && values.aggregatorId) {
+      formData.append('aggregatorId', values.aggregatorId);
+    }
+
+
+    // ✅ existing attachments + voice file merge
+    const existingFiles =
+      values.attachment instanceof FileList
+        ? Array.from(values.attachment)
+        : values.attachment || [];
+
+    [...existingFiles, file].forEach((f, index) => {
+      formData.append(`attachment[${index}]`, f);
+    });
+
+    formData.append('descriptions', values.descriptions);
+
+
+    // ✅ NEW API CALL (replace with your API)
+    createVoiceTicket(formData)
+      .then((response) => {
+        successMessage(response);
+        navigate('/admin/tickets');
+
+         const patnerSMSData = {
+            businessEntity: user?.fullname,
+            nature: values.subCategory,
+            phone: values.mobileNumber,
+          };
+
+        // optional SMS
+        if (number) {
+          smsSendForPatner(patnerSMSData);
+        }
+      })
+      .catch(errorMessage)
+      .finally(() => setIsLoadingContextUpdated(false));
+
+  } catch (err) {
+    console.error(err);
+    setIsLoadingContextUpdated(false);
+  }
+};
+
+const handleVoiceComplaintSubmit = async ({ number, file }) => {
+  setIsVoiceRecorderOpen(false);
+  setIsLoadingContextUpdated(true);
+
+  // ✅ first call voice API
+  const voiceResponse = await sendVoiceToApi(file);
+
+  // ✅ only if success
+  if (voiceResponse) {
+    
+    handleVoiceApiSubmit({ number, file, voiceData: voiceResponse });
+  } else {
+    errorMessage("Voice processing failed");
+  }
+};
+
+
+
+
   return (
     <section>
       <div className="container-fluid">
@@ -901,6 +1038,26 @@ export const CustomerComplaintCreate = () => {
           </div>
         </form>
       </div>
+
+
+            <FloatingVoiceRecorderButton
+        onClick={() => setIsVoiceRecorderOpen(true)}
+        ariaLabel={isChecked ? 'Open voice complaint recorder' : 'ভয়েস অভিযোগ রেকর্ডার খুলুন'}
+        tooltipText={
+          isChecked
+            ? 'You can also create a ticket with your voice.'
+            : 'আপনি চাইলে ভয়েস রেকর্ড করেও টিকেট করতে পারবেন।'
+        }
+      />
+      <VoiceComplaintRecorderModal
+        show={isVoiceRecorderOpen}
+        onClose={() => setIsVoiceRecorderOpen(false)}
+        onSubmit={handleVoiceComplaintSubmit}
+        isSubmitting={isLoading}
+        isEnglish={isChecked}
+        initialNumber={formik.values.mobileNumber}
+      />
+
     </section>
   );
 };
