@@ -359,6 +359,26 @@ export const fetchRaceMaximEntityDetails = async (id) => {
     throw error;
   }
 };
+export const fetchRaceWincomEntityDetails = async (id) => {
+  try {
+    const response = await apiClient.get(
+      `https://webapp.race.net.bd/api/wincom/race/fetch-entity-details-by-entity/${id}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const fetchRaceWincomEntity = async () => {
+  try {
+    const response = await apiClient.get(
+      'https://webapp.race.net.bd/api/wincom/race/webapppartnerentity'
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const fetchWebAppEntityDetailsOwn = async (id) => {
   try {

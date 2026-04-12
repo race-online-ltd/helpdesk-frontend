@@ -45,6 +45,7 @@ import {
   sendSMSByPartnerNumber,
   sendSMSBySID,
   store,
+  fetchRaceWincomEntityDetails
 } from '../../../api/api-client/ticketApi';
 import { getCcEmail, getPriority, getSource, getStatus } from '../../../api/api-client/utilityApi';
 import { fetchAllTeam, fetchTeamBySubCategory } from '../../../api/api-client/settings/teamApi';
@@ -124,7 +125,7 @@ export const AddNewTicket = () => {
   const [searchClient, setSearchClient] = useState('');
   const [inputValue, setInputValue] = useState('');
 
-  let isSIDFieldVisible = [8, 9, 11].includes(selectedBusinessId);
+  let isSIDFieldVisible = [8, 9, 11,14].includes(selectedBusinessId);
   let isNBElement = [16, 17, 18].includes(selectedClientId);
 
   useEffect(() => {
@@ -364,108 +365,6 @@ export const AddNewTicket = () => {
     return () => clearTimeout(delayDebounce);
   }, [selectedBusinessId, searchClient]);
 
-  // Prism Api Calling
-  // useEffect(() => {
-  //   if (selectedBusinessEntityName != null) {
-  //     if (selectedBusinessEntityName === 'Race Online Ltd') {
-  //       setIsClientLoading(true);
-  //       raceClients()
-  //         .then((response) => {
-  //           setClientOptions(
-  //             response.map((option) => ({
-  //               value: option.id,
-  //               label: option.name,
-  //             }))
-  //           );
-  //         })
-  //         .catch(errorMessage)
-  //         .finally(() => {
-  //           setIsClientLoading(false);
-  //           setFoundClientInfo([]);
-  //         });
-  //     } else if (selectedBusinessEntityName === 'Earth Telecommunication') {
-  //       setIsClientLoading(true);
-  //       earthClients()
-  //         .then((response) => {
-  //           setClientOptions(
-  //             response.map((option) => ({
-  //               value: option.id,
-  //               label: option.name,
-  //             }))
-  //           );
-  //         })
-  //         .catch(errorMessage)
-  //         .finally(() => {
-  //           setIsClientLoading(false);
-  //           setFoundClientInfo([]);
-  //         });
-  //     } else if (selectedBusinessEntityName === 'Dhaka Colo') {
-  //       setIsClientLoading(true);
-  //       dhakaColoClients()
-  //         .then((response) => {
-  //           setClientOptions(
-  //             response.map((option) => ({
-  //               value: option.id,
-  //               label: option.name,
-  //             }))
-  //           );
-  //         })
-  //         .catch(errorMessage)
-  //         .finally(() => {
-  //           setIsClientLoading(false);
-  //           setFoundClientInfo([]);
-  //         });
-  //     } else if (selectedBusinessEntityName === 'Orbit OWN') {
-  //       setIsClientLoading(true);
-  //       fetchWebAppOwnEntity()
-  //         .then((response) => {
-  //           setClientOptions(
-  //             response.map((option) => ({
-  //               value: option.entity_id,
-  //               label: option.entity_name,
-  //             }))
-  //           );
-  //         })
-  //         .catch(errorMessage)
-  //         .finally(() => {
-  //           setIsClientLoading(false);
-  //           setFoundClientInfo([]);
-  //         });
-  //     } else if (selectedBusinessEntityName === 'Orbit Partner') {
-  //       setIsClientLoading(true);
-  //       fetchWebAppPartnerEntity()
-  //         .then((response) => {
-  //           setClientOptions(
-  //             response.map((option) => ({
-  //               value: option.entity_id,
-  //               label: option.source_entity,
-  //             }))
-  //           );
-  //         })
-  //         .catch(errorMessage)
-  //         .finally(() => {
-  //           setIsClientLoading(false);
-  //           setFoundClientInfo([]);
-  //         });
-  //     } else if (selectedBusinessEntityName === 'Race Partner') {
-  //       setIsClientLoading(true);
-  //       fetchRaceMaximEntity()
-  //         .then((response) => {
-  //           setClientOptions(
-  //             response.map((option) => ({
-  //               value: option.entity_id,
-  //               label: option.source_entity,
-  //             }))
-  //           );
-  //         })
-  //         .catch(errorMessage)
-  //         .finally(() => {
-  //           setIsClientLoading(false);
-  //           setFoundClientInfo([]);
-  //         });
-  //     }
-  //   }
-  // }, [selectedBusinessEntityName]);
 
   const handleDeepSearch = async () => {
     if (!selectedBusinessEntityName) return;
@@ -633,6 +532,15 @@ export const AddNewTicket = () => {
                 formik.setFieldValue('ticketInfo.aggregatorId', res.data?.[0]?.aggregator_id);
               })
               .catch(errorMessage);
+          })
+          .catch(errorMessage)
+          .finally(() => setIsLoading(false));
+      }else if (selectedBusinessEntityName === 'Winer Communication') {
+        fetchRaceWincomEntityDetails(selectedClientId)
+          .then((response) => {
+            console.log('wincom details', response);
+            setFoundClientInfo(response[0]);
+            updateOrbitFormikClientInfo(response[0]);
           })
           .catch(errorMessage)
           .finally(() => setIsLoading(false));
@@ -1111,6 +1019,7 @@ export const AddNewTicket = () => {
       case 8:
       case 9:
       case 11:
+      case 14:
         return (
           <div className="col-sm-12 col-md-12 col-lg-12 col-xl-12 ">
             <div className="custom-card">
