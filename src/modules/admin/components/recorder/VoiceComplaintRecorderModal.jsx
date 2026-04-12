@@ -28,7 +28,7 @@ const TEXT = {
     title: 'ভয়েস অভিযোগ',
     number: 'নম্বর',
     numberPlaceholder: 'আপনার নম্বর লিখুন',
-    record: 'রেকর্ড',
+    record: 'রেকর্ড করুন',
     stop: 'স্টপ',
     rerecord: 'আবার রেকর্ড করুন',
     submit: 'টিকেট করুন',
@@ -437,37 +437,39 @@ export const VoiceComplaintRecorderModal = ({
           </button>
         </div>
 
-        <div className="mb-3">
-          <input
-            type="text"
-            className="form-control"
-            value={numberFormik.values.number}
-            placeholder={t.numberPlaceholder}
-            onChange={(event) => {
-              numberFormik.setFieldValue(
-                'number',
-                event.target.value.replace(/[^\d]/g, '').slice(0, 11),
-                false
-              );
-            }}
-          />
-          {numberFormik.touched.number && numberFormik.errors.number ? (
-            <div className="text-danger small mt-1">{t.numberRequired}</div>
-          ) : null}
-        </div>
+        <div className="voice-recorder-input-row mb-3">
+          <div className="voice-recorder-input-column">
+            <input
+              type="text"
+              className="form-control"
+              value={numberFormik.values.number}
+              placeholder={t.numberPlaceholder}
+              onChange={(event) => {
+                numberFormik.setFieldValue(
+                  'number',
+                  event.target.value.replace(/[^\d]/g, '').slice(0, 11),
+                  false
+                );
+              }}
+            />
+            {numberFormik.touched.number && numberFormik.errors.number ? (
+              <div className="text-danger small mt-1">{t.numberRequired}</div>
+            ) : null}
+          </div>
 
-        {!hasRecordingView ? (
-          <div className="voice-recorder-idle-action">
+          {!hasRecordingView ? (
             <button
               type="button"
-              className="voice-recorder-action-button record center"
+              className="voice-recorder-action-button record voice-recorder-record-button"
               onClick={startRecording}
             >
               <Mic size={18} />
               <span>{t.record}</span>
             </button>
-          </div>
-        ) : (
+          ) : null}
+        </div>
+
+        {!hasRecordingView ? null : (
           <>
             <div className="voice-recorder-status-row">
               <span>{t.timer}</span>
@@ -519,25 +521,27 @@ export const VoiceComplaintRecorderModal = ({
 
         {error ? <div className="text-danger small mt-2">{error}</div> : null}
 
-        <div className="voice-recorder-footer">
-          <button
-            type="button"
-            className="btn btn-outline-secondary"
-            onClick={onClose}
-            disabled={isSubmitting}
-          >
-            {t.close}
-          </button>
-          <button
-            type="button"
-            className="custom-btn-for-canvas"
-            onClick={handleSubmit}
-            disabled={isSubmitting || isRecording}
-          >
-            <i className="bi bi-send me-1"></i>
-            {t.submit}
-          </button>
-        </div>
+        {recordedBlob && !isRecording ? (
+          <div className="voice-recorder-footer">
+            <button
+              type="button"
+              className="btn btn-outline-secondary"
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
+              {t.close}
+            </button>
+            <button
+              type="button"
+              className="custom-btn-for-canvas"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+            >
+              <i className="bi bi-send me-1"></i>
+              {t.submit}
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );

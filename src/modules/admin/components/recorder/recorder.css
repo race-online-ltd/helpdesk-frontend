@@ -183,6 +183,22 @@
   margin: 18px 0 8px;
 }
 
+.voice-recorder-input-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.voice-recorder-input-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.voice-recorder-record-button {
+  min-width: 130px;
+  align-self: flex-end;
+}
+
 .voice-recorder-controls {
   display: flex;
   flex-wrap: wrap;
@@ -295,6 +311,15 @@
 
   .voice-recorder-idle-action {
     margin: 14px 0 6px;
+  }
+
+  .voice-recorder-input-row {
+    flex-direction: column;
+  }
+
+  .voice-recorder-record-button {
+    width: 100%;
+    align-self: stretch;
   }
 
   .voice-recorder-footer {
