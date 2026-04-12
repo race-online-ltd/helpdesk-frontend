@@ -315,14 +315,25 @@ export const TicketDetails = () => {
     setPopupVisible(false);
   };
 
+  const [audioModal, setAudioModal] = useState(false);
+  const [audioSrc, setAudioSrc] = useState(null);
+
   const handleAttachmentPopup = (img) => {
     const fileExtension = img.split('.').pop().toLowerCase();
     const isImage = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(fileExtension);
+    const isAudio = ['wav', 'mp3', 'ogg'].includes(fileExtension);
     const fileUrl = `${baseURL}${encodeURIComponent(img)}`;
+   
 
     if (isImage) {
       window.open(fileUrl, '_blank');
-    } else {
+    } else if (isAudio) {
+    // const audio = new Audio(fileUrl);
+    // audio.play();
+    setAudioSrc(fileUrl);
+    setAudioModal(true); // ✅ open modal
+  } 
+    else {
       const fileName = img.split('/').pop();
       const link = document.createElement('a');
       link.href = fileUrl;
@@ -2146,6 +2157,26 @@ export const TicketDetails = () => {
       />
 
       {isPopupVisible && <PopUp imgLink={attachmentFileLink} onClose={handleClosePopup} />}
+
+      {audioModal && (
+  <div className="custom-audio-modal">
+    <div className="audio-modal-content">
+
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h6>Audio Player</h6>
+        <button className="close-btn" onClick={() => setAudioModal(false)}>
+  <i className="bi bi-x-lg"></i>
+</button>
+      </div>
+
+      <audio controls autoPlay style={{ width: '100%' }}>
+        <source src={audioSrc} type="audio/wav" />
+        Your browser does not support audio
+      </audio>
+
+    </div>
+  </div>
+)}
     </section>
   );
 };

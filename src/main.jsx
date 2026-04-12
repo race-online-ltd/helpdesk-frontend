@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "animate.css";
 
 import App from "./App.jsx";
+import "./assets/styles/audio_modal.css";
 import "./index.css";
 import "./App.css";
 import "./Responsive.css";
