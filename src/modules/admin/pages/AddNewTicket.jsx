@@ -27,6 +27,7 @@ import {
   generateStrongPassword,
   getFirstCaracterOfFirstTwoWord,
   getWarningMessage,
+  SUPER_APP_COMPANY_MAP,
 } from '../../../utils/utility';
 import {
   fetchBackboneElementListById,
@@ -45,7 +46,9 @@ import {
   sendSMSByPartnerNumber,
   sendSMSBySID,
   store,
-  fetchRaceWincomEntityDetails
+  fetchRaceWincomEntityDetails,
+  getSupperappSidDetails,
+  getSupperappEntityDetails
 } from '../../../api/api-client/ticketApi';
 import { getCcEmail, getPriority, getSource, getStatus } from '../../../api/api-client/utilityApi';
 import { fetchAllTeam, fetchTeamBySubCategory } from '../../../api/api-client/settings/teamApi';
@@ -502,6 +505,17 @@ export const AddNewTicket = () => {
           .then((response) => {
             setFoundClientInfo(response[0]);
             updateOrbitFormikClientInfo(response[0]);
+          })
+          .catch(errorMessage)
+          .finally(() => setIsLoading(false));
+      }else if (selectedBusinessEntityName === 'Orbit Partner' &&   selectedClientId?.includes('BSS')) {
+        const entityId = selectedClientId.split('~')[1];
+        const compnyId =  SUPER_APP_COMPANY_MAP[selectedBusinessId];
+        getSupperappEntityDetails(compnyId, entityId)
+          .then((response) => {
+            setFoundClientInfo(response);
+            updateOrbitFormikClientInfo(response);
+            
           })
           .catch(errorMessage)
           .finally(() => setIsLoading(false));
@@ -989,13 +1003,49 @@ export const AddNewTicket = () => {
         setIsClientDetailsLoading(false);
       });
   };
+  const handleSuperAppSIDApiDetails = (sid) => {
+    setIsClientLoading(true);
+    setIsClientDetailsLoading(true);
+
+    getSupperappSidDetails(sid)
+      .then((response) => {
+
+        setFoundClientInfo(response);
+        updateOrbitFormikClientInfo(response);
+
+        setClientOptions(
+          response.map((option) => ({
+            value: option.source_entity_id,
+            label: option.source_entity,
+          }))
+        );
+
+        formik.setFieldValue('clientInfo.client', response?.source_entity_id);
+        formik.setFieldValue('ticketInfo.client', response?.source_entity_id);
+     
+      })
+      .catch(errorMessage)
+      .finally(() => {
+        setIsClientLoading(false);
+        setIsClientDetailsLoading(false);
+      });
+  };
+
 
   const handleSIDSubmit = () => {
-    if (formik.values.ticketInfo.sid) {
-      handleSIDApiDetails(formik.values.ticketInfo.sid);
-      opentTicketsForSid(formik.values.ticketInfo.sid);
-    }
-  };
+  const sid = String(formik.values.ticketInfo.sid || "").trim();
+
+  if (!sid) return;
+
+  const isSuperAppSID = sid.length === 13;
+
+  if (isSuperAppSID) {
+    handleSuperAppSIDApiDetails(sid);
+  } else {
+    handleSIDApiDetails(sid);
+    opentTicketsForSid(sid);
+  }
+};
 
   const updateOrbitFormikClientInfo = (response) => {
     formik.setFieldValue('clientInfo.clientName', response?.entity_name || '');

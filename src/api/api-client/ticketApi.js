@@ -1,4 +1,4 @@
-import { apiClient } from '../api-config/config';
+import { apiClient,superAppClient } from '../api-config/config';
 
 export const store = async (data) => {
   try {
@@ -594,4 +594,23 @@ export const getSlaHistoryByTicketNumber = async (ticketNumber) => {
   } catch (error) {
     throw error;
   }
+};
+
+
+export const getSupperappSidDetails = async (sid) => {
+  const response = await superAppClient.get(`super-app/clients/${sid}`);
+  return response.data;
+};
+
+export const getSupperappEntityDetails = async (companyId, entityId) => {
+  const response = await superAppClient.get(
+    `/super-app/companies/${companyId}/entities`,
+    {
+      params: {
+        entityId: entityId,
+      },
+    }
+  );
+
+  return response.data;
 };

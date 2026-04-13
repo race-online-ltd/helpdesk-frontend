@@ -85,3 +85,19 @@ export const htmlToPlainText = (html) => {
   div.innerHTML = html;
   return div.textContent || div.innerText || '';
 };
+
+
+
+export const SUPER_APP_COMPANY_MAP = {
+  8: 'CID000004',
+  9: 'CID000005',
+  10: 'CID000006',
+  11: 'CID000007',
+  12: 'CID000008',
+  13: 'CID000009',
+  14: 'CID000010',
+  15: 'CID000011',
+  16: 'CID000012',
+  17: 'CID000013',
+  18: 'CID000014',
+};

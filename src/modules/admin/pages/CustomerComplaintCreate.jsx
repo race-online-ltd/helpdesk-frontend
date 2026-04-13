@@ -539,13 +539,53 @@ export const CustomerComplaintCreate = () => {
     );
 
     const data = await response.json();
+    
+  //    if (!response.ok) {
+  //     throw {
+  //       response: {
+  //         data: {
+  //           message:
+  //             data?.detail?.message || "Voice processing failed",
+  //         },
+  //       },
+  //     };
+  //   }
+
+  //   return data;
+
+  // } catch (error) {
+  //   errorMessage(error); 
+  //   return null;
+  // }
+
+
+  if (!response.ok) {
+      throw {
+        response: {
+          data: {
+            message: "ভয়েস বোঝা যায়নি। আবার রেকর্ড করুন。",
+          },
+        },
+      };
+    }
 
     return data;
+
   } catch (error) {
-    errorMessage("Failed to process voice input. Please try again.");
-    console.error("Voice API Error:", error);
+    // 🔥 সব error → same message
+    errorMessage({
+      response: {
+        data: {
+          message: "ভয়েস বোঝা যায়নি। আবার রেকর্ড করুন।",
+        },
+      },
+    });
+
     return null;
   }
+   
+
+  
 };
 
   const handleVoiceApiSubmit = async ({ number, file,voiceData }) => {
@@ -598,28 +638,53 @@ export const CustomerComplaintCreate = () => {
     formData.append('descriptions', values.descriptions);
 
 
-    // ✅ NEW API CALL (replace with your API)
-    createVoiceTicket(formData)
-      .then((response) => {
-        successMessage(response);
-        navigate('/admin/tickets');
+  //   // ✅ NEW API CALL (replace with your API)
+  //   createVoiceTicket(formData)
+  //     .then((response) => {
+  //       successMessage(response);
+  //       navigate('/admin/tickets');
 
-         const patnerSMSData = {
-            businessEntity: user?.fullname,
-            nature: values.subCategory,
-            phone: values.mobileNumber,
-          };
+  //        const patnerSMSData = {
+  //           businessEntity: user?.fullname,
+  //           nature: values.subCategory,
+  //           phone: values.mobileNumber,
+  //         };
 
-        // optional SMS
-        if (number) {
-          smsSendForPatner(patnerSMSData);
-        }
-      })
-      .catch(errorMessage)
-      .finally(() => setIsLoadingContextUpdated(false));
+  //       // optional SMS
+  //       if (number) {
+  //         smsSendForPatner(patnerSMSData);
+  //       }
+  //     })
+  //     .catch(errorMessage)
+  //     .finally(() => setIsLoadingContextUpdated(false));
 
-  } catch (err) {
-    console.error(err);
+  // } catch (err) {
+  //   console.error(err);
+  //   setIsLoadingContextUpdated(false);
+  // }
+
+
+   // 🔥 API call
+    const response = await createVoiceTicket(formData);
+
+    // ✅ success
+    successMessage(response);
+    navigate('/admin/tickets');
+
+    // 🔹 SMS optional
+    if (number) {
+      const patnerSMSData = {
+        businessEntity: user?.fullname,
+        nature: values.subCategory,
+        phone: values.mobileNumber,
+      };
+      smsSendForPatner(patnerSMSData);
+    }
+
+  } catch (error) {
+    console.error("Voice Ticket Error:", error);
+
+  } finally {
     setIsLoadingContextUpdated(false);
   }
 };
@@ -628,16 +693,15 @@ const handleVoiceComplaintSubmit = async ({ number, file }) => {
   setIsVoiceRecorderOpen(false);
   setIsLoadingContextUpdated(true);
 
-  // ✅ first call voice API
   const voiceResponse = await sendVoiceToApi(file);
 
-  // ✅ only if success
-  if (voiceResponse) {
-    
-    handleVoiceApiSubmit({ number, file, voiceData: voiceResponse });
-  } else {
-    errorMessage("Voice processing failed");
+  // ✅ only proceed if success
+  if (!voiceResponse) {
+    setIsLoadingContextUpdated(false);
+    return; // ❌ stop এখানেই
   }
+
+  await handleVoiceApiSubmit({ number, file, voiceData: voiceResponse });
 };
 
 

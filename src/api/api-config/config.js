@@ -19,12 +19,12 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// export const RaceApiClient = axios.create({
-//   baseURL: import.meta.env.VITE_RACE_API_URL,
-//   headers: {
-//     Authorization: `Bearer ${import.meta.env.VITE_RACE_ACCESS_TOKEN}`,
-//   },
-// });
+export const superAppClient = axios.create({
+  baseURL: import.meta.env.VITE_SUPERAPP_URL,
+  headers: {
+    Authorization: `Basic ${import.meta.env.VITE_SUPERAPP_API_KEY}`,
+  },
+});
 
 export const RaceApiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
